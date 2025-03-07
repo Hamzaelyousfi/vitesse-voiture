@@ -1,0 +1,105 @@
+<div class="calcul-container">
+    <h2 class="text-primary mb-4 text-center">Calculer le temps de trajet</h2>
+
+    <form [formGroup]="calculForm" (ngSubmit)="onSubmit()" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="number" id="distance" formControlName="distance" class="form-control"
+                        placeholder="Entrez la distance en km" step="0.1" min="0.1">
+                    <label for="distance">Distance (km)</label>
+                    <div class="invalid-feedback d-block"
+                        *ngIf="calculForm.get('distance')?.invalid && calculForm.get('distance')?.touched">
+                        <span *ngIf="calculForm.get('distance')?.errors?.['required']">La distance est
+                            obligatoire</span>
+                        <span *ngIf="calculForm.get('distance')?.errors?.['min']">La distance doit être positive</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select id="model" formControlName="model" class="form-select">
+                        <option value="">Sélectionnez un modèle</option>
+                        <option *ngFor="let voiture of voitures" [value]="voiture.model">
+                            {{ voiture.model }} ({{ voiture.kmh }} km/h)
+                        </option>
+                    </select>
+                    <label for="model">Modèle de voiture</label>
+                    <div class="invalid-feedback d-block"
+                        *ngIf="calculForm.get('model')?.invalid && calculForm.get('model')?.touched">
+                        <span *ngIf="calculForm.get('model')?.errors?.['required']">Le modèle est obligatoire</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 col-md-6 mx-auto mt-4">
+            <button type="submit" class="btn btn-primary py-3" [disabled]="calculForm.invalid || loading">
+                <span *ngIf="!loading">
+                    <i class="bi bi-calculator me-2"></i>Calculer
+                </span>
+                <span *ngIf="loading">
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Calcul en cours...
+                </span>
+            </button>
+        </div>
+    </form>
+
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div *ngIf="resultat" class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="h5 mb-0"><i class="bi bi-check-circle me-2"></i>Résultat du calcul</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-success mb-4">
+                {{ resultat.message }}
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 bg-light">
+                        <div class="card-body text-center">
+                            <i class="bi bi-signpost-2 fs-1 text-primary mb-2"></i>
+                            <h5 class="card-title">Distance</h5>
+                            <p class="card-text fw-bold">{{ resultat.distance }} km</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 bg-light">
+                        <div class="card-body text-center">
+                            <i class="bi bi-car-front fs-1 text-primary mb-2"></i>
+                            <h5 class="card-title">Modèle</h5>
+                            <p class="card-text fw-bold">{{ resultat.model }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 bg-light">
+                        <div class="card-body text-center">
+                            <i class="bi bi-speedometer2 fs-1 text-primary mb-2"></i>
+                            <h5 class="card-title">Vitesse</h5>
+                            <p class="card-text fw-bold">{{ resultat.vitesse }} km/h</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 bg-light">
+                        <div class="card-body text-center">
+                            <i class="bi bi-clock fs-1 text-primary mb-2"></i>
+                            <h5 class="card-title">Temps</h5>
+                            <p class="card-text fw-bold">{{ resultat.temps.heures }} h {{ resultat.temps.minutes }} min
+                                {{ resultat.temps.secondes }} s</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

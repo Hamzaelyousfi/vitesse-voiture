@@ -1,0 +1,94 @@
+<div class="voiture-management container-fluid py-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+            <h2 class="h5 mb-0 text-primary">
+                <i class="bi bi-car-front me-2"></i>Liste des Voitures
+            </h2>
+            <button class="btn btn-primary" (click)="addVoiture()" data-bs-toggle="modal"
+                data-bs-target="#voitureModal">
+                <i class="bi bi-plus-circle me-2"></i>Ajouter une voiture
+            </button>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Modèle</th>
+                            <th>Vitesse (km/h)</th>
+                            <th>Caractéristiques</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="voitures.length > 0; else noVoitures">
+                            <tr *ngFor="let voiture of voitures">
+                                <td class="align-middle fw-medium">{{ voiture.model }}</td>
+                                <td class="align-middle">{{ voiture.kmh }} km/h</td>
+                                <td class="align-middle">
+                                    <span *ngFor="let carac of voiture.caracteristiques; let last = last" class="me-1">
+                                        <span class="badge bg-light text-dark border">{{ carac }}</span>
+                                    </span>
+                                    <span *ngIf="!voiture.caracteristiques?.length"
+                                        class="text-muted fst-italic">Aucune</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary" (click)="viewDetails(voiture)"
+                                            data-bs-toggle="modal" data-bs-target="#voitureModal">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" (click)="editVoiture(voiture)"
+                                            data-bs-toggle="modal" data-bs-target="#voitureModal">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            (click)="deleteVoiture(voiture.id!)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+
+            <ng-template #noVoitures>
+                <div class="text-center p-5">
+                    <i class="bi bi-car-front-fill text-muted fs-1"></i>
+                    <p class="text-muted mt-3">Aucune voiture enregistrée</p>
+                    <button class="btn btn-primary" (click)="addVoiture()" data-bs-toggle="modal"
+                        data-bs-target="#voitureModal">
+                        <i class="bi bi-plus-circle me-2"></i>Ajouter une voiture
+                    </button>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit/View -->
+    <div class="modal fade" id="voitureModal" tabindex="-1" aria-labelledby="voitureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="voitureModalLabel">
+                        <i class="bi"
+                            [ngClass]="{'bi-plus-circle': isAdding, 'bi-pencil-square': isEditing, 'bi-info-circle': !isEditing && !isAdding}"></i>
+                        <span *ngIf="isAdding"> Ajouter une nouvelle voiture</span>
+                        <span *ngIf="isEditing"> Modifier une voiture</span>
+                        <span *ngIf="!isEditing && !isAdding"> Détails de la voiture</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelEdit()"></button>
+                </div>
+                <div class="modal-body">
+                    <app-voiture-form *ngIf="selectedVoiture" [voiture]="selectedVoiture" [isEditing]="isEditing"
+                        [isAdding]="isAdding" (save)="saveVoiture($event)" (cancel)="cancelEdit()">
+                    </app-voiture-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
